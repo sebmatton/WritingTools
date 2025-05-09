@@ -59,6 +59,7 @@ class UpdateChecker:
         # Always update config with fresh status
         if "update_available" in self.app.config or update_available:
             self.app.config["update_available"] = update_available
+            self.app.config["update_shown"] = True
             self.app.save_config(self.app.config)
             
         return update_available
