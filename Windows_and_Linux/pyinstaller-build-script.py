@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import shutil
 
 
 def run_pyinstaller_build():
@@ -75,29 +76,48 @@ def run_pyinstaller_build():
 
     try:
         # Remove previous build directories
-        if os.path.exists('dist'):
-            os.system("rmdir /s /q dist")
-        if os.path.exists('build'):
-            os.system("rmdir /s /q build")
-        if os.path.exists('__pycache__'):
-            os.system("rmdir /s /q __pycache__")
+        for folder in ['dist', 'build', '__pycache__']:
+            if os.path.exists(folder):
+                shutil.rmtree(folder)
 
         # Run PyInstaller
         subprocess.run(pyinstaller_command, check=True)
         print("Build completed successfully!")
 
-        # Clean up unnecessary files
-        if os.path.exists('build'):
-            os.system("rmdir /s /q build")
-        if os.path.exists('__pycache__'):
-            os.system("rmdir /s /q __pycache__")
+        # Copy resources to dist directory
+        if not os.path.exists('dist'):
+            os.makedirs('dist')
 
-        # No need to copy data files manually since they are included
-        # in the executable using --add-data
+        # Copy "icons" folder
+        shutil.copytree('icons', os.path.join('dist', 'icons'))
+        
+        # Copy files
+        image_files = [
+            "options.json",
+            "background.png",
+            "background_dark.png",
+            "background_popup.png",
+            "background_popup_dark.png"
+        ]
+        for file in image_files:
+            if os.path.exists(file):
+                shutil.copy(file, 'dist')
+            else:
+                print(f"Warning: {file} not found.")
+
+
+        # Clean up unnecessary files
+        for folder in ['build', '__pycache__']:
+            if os.path.exists(folder):
+                shutil.rmtree(folder)
 
     except subprocess.CalledProcessError as e:
         print(f"Build failed with error: {e}")
         sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     run_pyinstaller_build()
