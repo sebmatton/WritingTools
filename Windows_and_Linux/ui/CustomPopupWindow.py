@@ -26,59 +26,59 @@ _ = lambda x: x
 # Default `options.json` content to restore when the user presses "Reset"
 ################################################################################
 DEFAULT_OPTIONS_JSON = r"""{
-  "Proofread": {
-    "prefix": "Proofread this:\n\n",
-    "instruction": "You are a grammar proofreading assistant.\nOutput ONLY the corrected text without any additional comments.\nMaintain the original text structure and writing style.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with this (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/magnifying-glass",
-    "open_in_window": false
-  },
-  "Rewrite": {
-    "prefix": "Rewrite this:\n\n",
-    "instruction": "You are a writing assistant.\nRewrite the text provided by the user to improve phrasing.\nOutput ONLY the rewritten text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with proofreading (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/rewrite",
-    "open_in_window": false
-  },
-  "Friendly": {
-    "prefix": "Make this more friendly:\n\n",
-    "instruction": "You are a writing assistant.\nRewrite the text provided by the user to be more friendly.\nOutput ONLY the friendly text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with rewriting (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/smiley-face",
-    "open_in_window": false
-  },
-  "Professional": {
-    "prefix": "Make this more professional:\n\n",
-    "instruction": "You are a writing assistant.\nRewrite the text provided by the user to be more professional. Output ONLY the professional text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with rewriting (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/briefcase",
-    "open_in_window": false
-  },
-  "Concise": {
-    "prefix": "Make this more concise:\n\n",
-    "instruction": "You are a writing assistant.\nRewrite the text provided by the user to be more concise.\nOutput ONLY the concise text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with rewriting (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/concise",
-    "open_in_window": false
-  },
-  "Table": {
-    "prefix": "Convert this into a table:\n\n",
-    "instruction": "You are an assistant that converts text provided by the user into a Markdown table.\nOutput ONLY the table without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is completely incompatible with this with conversion, output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/table",
+  "Custom": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a writing and coding assistant. You MUST make the user\\'s described change to the text or code provided by the user. Output ONLY the appropriately modified text or code without additional comments. Respond in the same language as the input (e.g., English US, French). Do not answer or respond to the user\\'s text content. If the text or code is absolutely incompatible with the requested change, output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/custom",
     "open_in_window": true
   },
-  "Key Points": {
-    "prefix": "Extract key points from this:\n\n",
-    "instruction": "You are an assistant that extracts key points from text provided by the user. Output ONLY the key points without additional comments.\n\nYou should use Markdown formatting (lists, bold, italics, codeblocks, etc.) as appropriate to make it quite legible and readable.\n\nDon't be repetitive or too verbose.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with extracting key points (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/keypoints",
+  "Translate": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a translator assistant. Translate the given text to french if it is not french already, or translate to english if it is french. Output ONLY the translation without additional comments. Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/translate",
+    "open_in_window": true
+  },
+  "Rephrase": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a writing assistant.\nRewrite the provided text or paragraph to improve phrasing while ensuring clarity, conciseness, and a natural flow. The revision should preserve the tone, style, and formatting of the original text. Additionally, correct any grammar and spelling errors you come across.\nOutput ONLY the rewritten text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nOutput ONLY the result without additional comments. Do not answer or respond to the user's text content.\nIf the text is absolutely incompatible with proofreading (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/custom",
+    "open_in_window": true
+  },
+  "Concise": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a writing assistant.\nRewrite the text provided by the user to be more concise while retaining its main goals and ideas. Include key words where appropriate.\nOutput ONLY the concise text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with rewriting (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/concise",
+    "open_in_window": true
+  },
+  "Proofread": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a grammar proofreading assistant.\nOutput ONLY the corrected text without any additional comments.\nMaintain the original text structure and writing style.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with this (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/proofread",
+    "open_in_window": true
+  },
+  "Reply": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "Please generate a reply to the following message, inferring the context (such as an email, social media post, or chat message) from its style and content. The reply should be clear and concise, matching the tone and style of the original message. Do not add any information beyond what is provided. If a 'yes' or 'no' response is appropriate or different answers are clearly identified, write both an affirmative and a negative reply and format the options starting with a bold heading to enumarate the options. If specific information is missing and necessary for the reply, include placeholders like [YOUR_ANSWER_HERE], adjusted to fit the topic or context. The reply should be in the same language as the provided text.\nOutput ONLY the reply without additional comments.\nIf the text is absolutely incompatible with summarisation (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/pencil",
     "open_in_window": true
   },
   "Summary": {
-    "prefix": "Summarize this:\n\n",
-    "instruction": "You are a summarization assistant.\nProvide a succinct summary of the text provided by the user.\nThe summary should be succinct yet encompass all the key insightful points.\n\nTo make it quite legible and readable, you should use Markdown formatting (bold, italics, codeblocks...) as appropriate.\nYou should also add a little line spacing between your paragraphs as appropriate.\nAnd only if appropriate, you could also use headings (only the very small ones), lists, tables, etc.\n\nDon't be repetitive or too verbose.\nOutput ONLY the summary without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with summarisation (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a summarization assistant.\nProvide a succinct summary of the text provided by the user.\nThe summary should be succinct yet encompass all the key insightful points.\n\nTo make it quite legible and readable, you should use Markdown formatting (bold, italics, codeblocks...) as appropriate.\nYou should also add a little line spacing between your paragraphs as appropriate.\nAnd only if appropriate, you could also use headings (only the very small ones), lists, tables, etc.\n\nDon't be repetitive or too verbose.\nOutput ONLY the summary without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nOutput ONLY the summary without additional comments.\nIf the text is absolutely incompatible with summarisation (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
     "icon": "icons/summary",
     "open_in_window": true
   },
-  "Custom": {
-    "prefix": "Make this change to the following text:\n\n",
-    "instruction": "You are a writing and coding assistant. You MUST make the user\\'s described change to the text or code provided by the user. Output ONLY the appropriately modified text or code without additional comments. Respond in the same language as the input (e.g., English US, French). Do not answer or respond to the user\\'s text content. If the text or code is absolutely incompatible with the requested change, output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\".",
-    "icon": "icons/summary",
-    "open_in_window": false
+  "Explain": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a writing assistant.\nPlease explain the following text using simple and clear language, ensuring that all crucial information is retained. Avoid making the explanation too generic or omitting key details.\nOutput ONLY the friendly text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with rewriting (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/magnifying-glass",
+    "open_in_window": true
+  },
+  "Professional": {
+    "prefix": ">> Make this change to the following text:\n\n",
+    "instruction": "You are a writing assistant.\nRewrite the text provided by the user to be more professional. Output ONLY the professional text without additional comments.\nRespond in the same language as the input (e.g., English US, French).\nDo not answer or respond to the user's text content.\nIf the text is absolutely incompatible with rewriting (e.g., totally random gibberish), output \"ERROR_TEXT_INCOMPATIBLE_WITH_REQUEST\". Don't include the first line starting with '>>' in your processing.",
+    "icon": "icons/briefcase",
+    "open_in_window": true
   }
 }"""
 
@@ -225,7 +225,7 @@ class DraggableButton(QtWidgets.QPushButton):
         self.setProperty("hover", False)
 
         # Set fixed size (adjust as needed)
-        self.setFixedSize(120, 40)
+        self.setFixedSize(120, 35)
 
         # Define base style using the dynamic property instead of the :hover pseudo-class
         self.base_style = f"""
@@ -233,16 +233,25 @@ class DraggableButton(QtWidgets.QPushButton):
                 background-color: {"#444" if colorMode=="dark" else "white"};
                 border: 1px solid {"#666" if colorMode=="dark" else "#ccc"};
                 border-radius: 8px;
-                padding: 10px;
-                font-size: 14px;
+                padding: 5px 10px;
+                font-size: 13px;
                 text-align: left;
                 color: {"#fff" if colorMode=="dark" else "#000"};
+                outline: none; 
             }}
             QPushButton[hover="true"] {{
                 background-color: {"#555" if colorMode=="dark" else "#f0f0f0"};
             }}
+            QPushButton:focus {{
+                background-color: {"#333" if colorMode=="dark" else "#e0e0e0"};  /* Darker on focus */
+                border-color: {"#888" if colorMode=="dark" else "#999"};  /* Make the border darker on focus */
+            }}
         """
         self.setStyleSheet(self.base_style)
+
+        # Allow Tab to focus on this button
+        self.setFocusPolicy(QtCore.Qt.TabFocus)
+
         logging.debug("DraggableButton initialized")
 
     def enterEvent(self, event):
@@ -328,6 +337,21 @@ class DraggableButton(QtWidgets.QPushButton):
         super().resizeEvent(event)
         if self.icon_container:
             self.icon_container.setGeometry(0, 0, self.width(), self.height())
+    
+    def focusInEvent(self, event):
+        # Highlight the focused button by changing its background color or border
+        self.setProperty("hover", True)
+        self.style().unpolish(self)
+        self.style().polish(self)
+        super().focusInEvent(event)
+
+    def focusOutEvent(self, event):
+        # Reset the button style when it loses focus
+        self.setProperty("hover", False)
+        self.style().unpolish(self)
+        self.style().polish(self)
+        super().focusOutEvent(event)
+
 
 class CustomPopupWindow(QtWidgets.QWidget):
     def __init__(self, app, selected_text):
@@ -335,12 +359,11 @@ class CustomPopupWindow(QtWidgets.QWidget):
         self.app = app
         self.selected_text = selected_text
         self.edit_mode = False
-        self.has_text = bool(selected_text.strip())
+        self.has_text = bool(selected_text.strip()) if isinstance(selected_text, str) else False
         
         self.drag_label = None
         self.edit_button = None
         self.reset_button = None
-        self.close_button = None
         self.custom_input = None
         self.input_area = None
         
@@ -354,6 +377,8 @@ class CustomPopupWindow(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setWindowTitle("Writing Tools")
+
+        self.update_shown = self.app.config.get("update_shown", True)  # Retrieve if update message is shown
         
         main_layout = QtWidgets.QVBoxLayout(self)
         main_layout.setContentsMargins(0,0,0,0)
@@ -368,7 +393,7 @@ class CustomPopupWindow(QtWidgets.QWidget):
         
         content_layout = QtWidgets.QVBoxLayout(self.background)
         # Margin Control
-        content_layout.setContentsMargins(10, 4, 10, 10)
+        content_layout.setContentsMargins(10, 10, 10, 10)
         content_layout.setSpacing(10)
         
         # TOP BAR LAYOUT & STYLE
@@ -434,27 +459,15 @@ class CustomPopupWindow(QtWidgets.QWidget):
         self.reset_button.hide()
         top_bar.addWidget(self.reset_button, 0, Qt.AlignRight)
 
-        # Close button block:
-        self.close_button = QPushButton("×")
-        self.close_button.setFixedSize(24, 24)
-        self.close_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: transparent;
-                color: {'#fff' if colorMode=='dark' else '#333'};
-                font-size: 20px;   /* bigger text */
-                font-weight: bold; /* bold text */
-                border: none;
-                border-radius: 6px;
-                padding: 0px;
-            }}
-            QPushButton:hover {{
-                background-color: {'#333' if colorMode=='dark' else '#ebebeb'};
-            }}
-        """)
-        self.close_button.clicked.connect(self.close)
-        top_bar.addWidget(self.close_button, 0, Qt.AlignRight)
         content_layout.addLayout(top_bar)
 
+        # Build icons
+        if self.has_text:
+            self.build_buttons_list()
+            self.rebuild_grid_layout(content_layout)
+        
+        # Hide edit button to keep it visible only when edition mode enabled
+        self.edit_button.hide()
         
         # Input area (hidden in edit mode)
         self.input_area = QWidget()
@@ -496,28 +509,64 @@ class CustomPopupWindow(QtWidgets.QWidget):
                             self.custom_input.sizeHint().height())
         send_btn.clicked.connect(self.on_custom_change)
         input_layout.addWidget(send_btn)
-        
-        content_layout.addWidget(self.input_area)
-        
-        if self.has_text:
-            self.build_buttons_list()
-            self.rebuild_grid_layout(content_layout)
-        else:
-            # If no text, hide the edit button; user can only do custom instructions
-            self.edit_button.hide()
+
+        if not self.has_text:
             self.custom_input.setMinimumWidth(300)
 
+        # Add the input area
+        content_layout.addWidget(self.input_area)
+
         # show update notice if applicable
-        if self.app.config.get("update_available", False):
-            update_label = QLabel()
-            update_label.setOpenExternalLinks(True)
-            update_label.setText('<a href="https://github.com/theJayTea/WritingTools/releases" style="color:rgb(255, 0, 0); text-decoration: underline; font-weight: bold;">There\'s an update! :D Download now.</a>')
-            update_label.setStyleSheet("margin-top: 10px;")
-            content_layout.addWidget(update_label, alignment=QtCore.Qt.AlignCenter)
+        if self.app.config.get("update_available", False) and self.update_shown:
+            self.update_layout = QHBoxLayout()
+            self.update_layout.setContentsMargins(0, 0, 0, 0)
+
+            # Add the update message QLabel
+            self.update_label = QLabel()
+            self.update_label.setOpenExternalLinks(True)
+            self.update_label.setText('<a href="https://github.com/theJayTea/WritingTools/releases" style="color:rgb(255, 0, 0); text-decoration: underline; font-weight: bold;">There\'s an update! Download now.</a>')
+            self.update_label.setStyleSheet("margin-top: 10px;")
+            self.update_layout.addWidget(self.update_label)
+
+            # Add the hide link (as a QLabel)
+            self.hide_button_label = QLabel("Hide")
+            self.hide_button_label.setStyleSheet("""
+                QLabel {
+                    color: grey;  /* Blue color like a link */
+                    text-decoration: underline;
+                    font-size: 12px;
+                    margin-top: 10px;
+                }
+            """)
+            self.hide_button_label.setAlignment(QtCore.Qt.AlignCenter)
+            self.hide_button_label.mousePressEvent = lambda event: self.hide_update_message(event)
+            self.update_layout.addWidget(self.hide_button_label)
+
+            # Add the horizontal layout to the content layout
+            content_layout.addLayout(self.update_layout)
+
+        self.custom_input.setFocusPolicy(QtCore.Qt.StrongFocus)  # Allow focus from mouse clicks
+        self.edit_button.setFocusPolicy(QtCore.Qt.NoFocus)  # No tab focus for edit button
+        send_btn.setFocusPolicy(QtCore.Qt.NoFocus)  # No tab focus for send button
         
         logging.debug('CustomPopupWindow UI setup complete')
         self.installEventFilter(self)
-        QtCore.QTimer.singleShot(250, lambda: self.custom_input.setFocus())
+        
+        if self.has_text:
+            self.button_widgets[0].setFocus()
+            QtCore.QTimer.singleShot(250, lambda: self.button_widgets[0].setFocus())
+
+    def hide_update_message(self, event=None):
+        """Hide the update message and update the config to remember the preference."""
+        if self.update_label:
+            self.update_label.setVisible(False)
+        if self.hide_button_label:
+            self.hide_button_label.setVisible(False)
+
+        # Store the user's preference to hide the message in future popups
+        self.app.config["update_shown"] = False
+        self.setFixedSize(self.width(), self.height() - self.update_layout.sizeHint().height()-10)  # Resize window based on new layout content size
+
 
     @staticmethod
     def load_options():
@@ -689,20 +738,21 @@ class CustomPopupWindow(QtWidgets.QWidget):
                     background-color: {'#333' if colorMode=='dark' else '#ebebeb'};
                 }}
             """)
-            # Hide close, show reset button & drag label
-            self.close_button.hide()
+            # Show edit button, reset button & drag label
             self.reset_button.show()
             self.drag_label.show()
+            self.edit_button.show()
 
         else:
             # Switch back to normal (non-edit) mode:
             icon_name = "pencil"
             self.edit_button.setText("")
             self.edit_button.setFixedSize(24, 24)  # Return to normal size
-            # Show close, hide reset & drag label
-            self.close_button.show()
+
+            # Hide edit button, reset button & drag label
             self.reset_button.hide()
             self.drag_label.hide()
+            self.edit_button.hide()
 
             # Inform the user that the app will close to apply changes
             msg = QtWidgets.QMessageBox()
@@ -911,7 +961,41 @@ class CustomPopupWindow(QtWidgets.QWidget):
         return super().eventFilter(obj, event)
 
     def keyPressEvent(self, event):
-        if event.key()==QtCore.Qt.Key_Escape:
+        current_widget = self.focusWidget()
+
+        if event.key() == QtCore.Qt.Key_Escape:
             self.close()
+
+        elif event.key() == QtCore.Qt.Key_Tab or event.key() == QtCore.Qt.Key_Right:
+            # Navigate to the next button or input field
+            if isinstance(current_widget, QLineEdit):  # if the current focus is on the input field
+                self.button_widgets[0].setFocus()  # move focus to the first button
+            else:
+                # Navigate through the buttons
+                current_index = self.button_widgets.index(current_widget)
+                next_index = (current_index + 1) % len(self.button_widgets)
+                self.button_widgets[next_index].setFocus()
+
+        elif event.key() == QtCore.Qt.Key_Left:
+            # Navigate to the previous button
+            if isinstance(current_widget, QLineEdit):  # if focus is on the input field
+                self.button_widgets[-1].setFocus()  # focus last button
+            else:
+                current_index = self.button_widgets.index(current_widget)
+                prev_index = (current_index - 1) % len(self.button_widgets)
+                self.button_widgets[prev_index].setFocus()
+
+        elif event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
+            # Trigger the focused button when Enter/Return is pressed
+            if isinstance(current_widget, QPushButton):
+                current_widget.click()
+        elif event.key() in range(QtCore.Qt.Key_1, QtCore.Qt.Key_9 + 1):
+            # Trigger the button corresponding to the numeric key (1-9)
+            index = event.key() - QtCore.Qt.Key_1
+            if 0 <= index < len(self.button_widgets):
+                self.button_widgets[index].click()
+
         else:
             super().keyPressEvent(event)
+
+
