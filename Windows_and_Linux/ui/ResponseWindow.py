@@ -37,15 +37,17 @@ class MarkdownTextBrowser(QtWidgets.QTextBrowser):
     def _apply_zoom(self):
         new_size = int(self.base_font_size * self.zoom_factor)
         
-        # Updated stylesheet with table styling
+        # Updated stylesheet with table styling               
         self.setStyleSheet(f"""
             QTextBrowser {{
-                background-color: {('transparent' if self.is_user_message else '#333' if colorMode == 'dark' else 'white')};
                 color: {'#ffffff' if colorMode == 'dark' else '#000000'};
-                border: {('none' if self.is_user_message else '1px solid ' + ('#555' if colorMode == 'dark' else '#ccc'))};
+                border: 'none';
                 border-radius: 8px;
-                padding: 8px;
-                margin: 0px;
+                padding-top: 5px;
+                padding-left: 5px;
+                padding-right: 5px;
+                padding-bottom: 0px;
+                margin: 1px;
                 font-size: {new_size}px;
                 line-height: 1.3;
                 width: 100%;
@@ -79,25 +81,18 @@ class MarkdownTextBrowser(QtWidgets.QTextBrowser):
         """)
         
     def _update_size(self):
-        # Calculate correct document width
-        available_width = self.viewport().width() - 16  # Account for padding
-        self.document().setTextWidth(available_width)
-        
-        # Get precise content height
+        self.document().setTextWidth(self.viewport().width())
         doc_size = self.document().size()
-        content_height = doc_size.height()
-        
-        # Add minimal padding for content
-        new_height = int(content_height + 16)  # Reduced total padding
-        
-        if self.minimumHeight() != new_height:
-            self.setMinimumHeight(new_height)
-            self.setMaximumHeight(new_height)  # Force fixed height
-            
-            # Update scroll area if needed
-            scroll_area = self.get_scroll_area()
-            if scroll_area:
-                scroll_area.update_content_height()
+        content_height = int(doc_size.height())+10
+
+        # Eliminate padding you control via stylesheet
+        self.setMinimumHeight(content_height)
+        self.setMaximumHeight(content_height)
+
+        # Update parent scroll area
+        scroll_area = self.get_scroll_area()
+        if scroll_area:
+            scroll_area.update_content_height()
                 
     def wheelEvent(self, event):
         if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
@@ -221,6 +216,13 @@ class ChatContentScrollArea(QScrollArea):
         msg_layout = QtWidgets.QVBoxLayout(msg_container)
         msg_layout.setContentsMargins(0, 0, 0, 0)
         msg_layout.setSpacing(0)
+        msg_container.setStyleSheet(f"""
+            background-color: {('transparent' if is_user else '#333' if colorMode == 'dark' else 'white')};
+            border: {('none' if is_user else '1px solid ' + ('#555' if colorMode == 'dark' else '#ccc'))};
+            border-radius: 8px;
+            width: 100%;
+        """)
+
         
         # Create text display with updated width
         text_display = MarkdownTextBrowser(is_user_message=is_user)
@@ -232,9 +234,60 @@ class ChatContentScrollArea(QScrollArea):
         # Calculate proper text display size using full width
         text_display.document().setTextWidth(self.width() - 20)
         doc_size = text_display.document().size()
-        text_display.setMinimumHeight(int(doc_size.height() + 16))
+        text_display.setMinimumHeight(int(doc_size.height() + 20))
         
         msg_layout.addWidget(text_display)
+
+        if not is_user:
+            # Copy button for assistant message
+            copy_btn = QtWidgets.QPushButton("Copy")
+            copy_btn.setFixedSize(50, 26)
+            copy_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {'#4CAF50' if colorMode != 'dark' else '#2e7d32'};
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 11px;
+                    margin-top: 0px;
+                    margin-bottom:5px;
+                    margin-right:5px;
+                }}
+                QPushButton:hover {{
+                    background-color: {'#45a049' if colorMode != 'dark' else '#1b5e20'};
+                }}
+            """)
+            copy_btn.setToolTip("Copy to clipboard")
+            copy_btn.clicked.connect(lambda _, browser=text_display: QtWidgets.QApplication.clipboard().setText(browser.toPlainText()))
+            copy_btn.clicked.connect(lambda: QtWidgets.QToolTip.showText(copy_btn.mapToGlobal(QtCore.QPoint()), "Copied!"))
+
+            copy_and_close_btn = QtWidgets.QPushButton("Copy and Close")
+            copy_and_close_btn.setFixedHeight(26)
+            copy_and_close_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {'#1976d2' if colorMode != 'dark' else '#1565c0'};
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 11px;
+                    margin-top: 0px;
+                    margin-bottom:5px;
+                    margin-right:5px;
+                }}
+                QPushButton:hover {{
+                    background-color: {'#1565c0' if colorMode != 'dark' else '#0d47a1'};
+                }}
+            """)
+            copy_and_close_btn.setToolTip("Copy and close the window")
+            copy_and_close_btn.clicked.connect(lambda _, browser=text_display: QtWidgets.QApplication.clipboard().setText(browser.toPlainText()))
+            copy_and_close_btn.clicked.connect(lambda: self.window().close())
+
+            # Right-aligned layout for the button
+            btn_layout = QtWidgets.QHBoxLayout()
+            btn_layout.addStretch()
+            btn_layout.addWidget(copy_btn)
+            btn_layout.addWidget(copy_and_close_btn)
+            msg_layout.addLayout(btn_layout)
         
         self.layout.addWidget(msg_container)
         self.layout.addStretch()
@@ -294,7 +347,7 @@ class ChatContentScrollArea(QScrollArea):
                     # Recalculate text width and height
                     text_display.document().setTextWidth(available_width)
                     doc_size = text_display.document().size()
-                    text_display.setMinimumHeight(int(doc_size.height() + 20))  # Reduced padding
+                    text_display.setMinimumHeight(int(doc_size.height() + 16))  # Reduced padding
 
 
 class ResponseWindow(QtWidgets.QWidget):
@@ -342,16 +395,17 @@ class ResponseWindow(QtWidgets.QWidget):
         UIUtils.setup_window_and_layout(self)
         content_layout = QtWidgets.QVBoxLayout(self.background)
         content_layout.setContentsMargins(20, 20, 20, 20)
-        content_layout.setSpacing(10)
+        content_layout.setSpacing(6)
 
         # Top bar with zoom controls
         top_bar = QtWidgets.QHBoxLayout()
         
         title_label = QtWidgets.QLabel(self.option)
-        title_label.setStyleSheet(f"font-size: 20px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
+        title_label.setStyleSheet(f"font-size: 15px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
         top_bar.addWidget(title_label)
         
         top_bar.addStretch()
+        top_bar.setContentsMargins(0, 0, 0, 0)
 
         # Zoom label with matched size
         zoom_label = QtWidgets.QLabel("Zoom:")
@@ -375,23 +429,10 @@ class ResponseWindow(QtWidgets.QWidget):
             btn.setStyleSheet(self.get_button_style())
             btn.setToolTip(tooltip)
             btn.clicked.connect(action)
-            btn.setFixedSize(30, 30)
+            btn.setFixedSize(25, 25)
             top_bar.addWidget(btn)
             
         content_layout.addLayout(top_bar)
-
-        # Copy controls with matching text size
-        copy_bar = QtWidgets.QHBoxLayout()
-        copy_hint = QtWidgets.QLabel(_("Select to copy with formatting"))
-        copy_hint.setStyleSheet(f"color: {'#aaaaaa' if colorMode == 'dark' else '#666666'}; font-size: 14px;")
-        copy_bar.addWidget(copy_hint)
-        copy_bar.addStretch()
-        
-        copy_md_btn = QtWidgets.QPushButton(_("Copy as Markdown"))
-        copy_md_btn.setStyleSheet(self.get_button_style())
-        copy_md_btn.clicked.connect(self.copy_first_response)  # Updated to only copy first response
-        copy_bar.addWidget(copy_md_btn)
-        content_layout.addLayout(copy_bar)
 
         # Loading indicator
         loading_container = QtWidgets.QWidget()
@@ -573,8 +614,8 @@ class ResponseWindow(QtWidgets.QWidget):
                 self.layout().contentsMargins().top() +
                 self.layout().contentsMargins().bottom() +
                 self.input_field.height() +
-                self.layout().spacing() * 5 +
-                200  # Increased from 185 for taller default height
+                self.layout().spacing() * 3 +
+                100  # Previously 200 — reduced for tighter fit
             )
                 
             # Get screen constraints
@@ -593,7 +634,7 @@ class ResponseWindow(QtWidgets.QWidget):
             )
                 
             # Set reasonable minimum height - increased by 10%
-            final_height = max(600, desired_total_height)  # Increased from 540
+            final_height = max(400, desired_total_height)  # Increased from 540
                 
             # Set width to 600px
             final_width = 600
