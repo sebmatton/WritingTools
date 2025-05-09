@@ -277,12 +277,7 @@ class WritingToolApp(QtWidgets.QApplication):
         """
         logging.debug('Showing popup window')
         # First attempt with default sleep
-        selected_text = self.get_selected_text()
-
-        # Retry with longer sleep if no text captured
-        if not selected_text:
-            logging.debug('No text captured, retrying with longer sleep')
-            selected_text = self.get_selected_text(sleep_duration=0.5)
+        selected_text = self.get_selected_text(timeout=1)
 
         logging.debug(f'Selected text: "{selected_text}"')
         try:
@@ -311,13 +306,12 @@ class WritingToolApp(QtWidgets.QApplication):
             self.popup_window.adjustSize()
             # Ensure the popup it's focused, even on lower-end machines
             self.popup_window.activateWindow()
-            QtCore.QTimer.singleShot(100, self.popup_window.custom_input.setFocus)
 
             popup_width = self.popup_window.width()
             popup_height = self.popup_window.height()
             # Calculate position
             x = cursor_pos.x()
-            y = cursor_pos.y() + 20  # 20 pixels below cursor
+            y = cursor_pos.y() + 0  # 20 pixels below cursor
             # Adjust if the popup would go off the right edge of the screen
             if x + popup_width > screen_geometry.right():
                 x = screen_geometry.right() - popup_width
@@ -329,7 +323,29 @@ class WritingToolApp(QtWidgets.QApplication):
         except Exception as e:
             logging.error(f'Error showing popup window: {e}', exc_info=True)
 
-    def get_selected_text(self, sleep_duration=0.2):
+    def get_clipboard_when_ready(self, previous_value="", timeout=1.0, interval=0.05):
+        """
+        Wait until the clipboard content changes from previous_value and return content.
+
+        Args:
+            previous_value: The known clipboard value before CTRL+C.
+            timeout: Max time to wait (in seconds).
+            interval: Time between checks (in seconds).
+        Returrns:
+            New clipboard content or None if timeout.
+        """
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            time.sleep(interval)
+            try:
+                current = pyperclip.paste()
+                if isinstance(current, str) and current != previous_value and current.strip() != "":
+                    return current
+            except pyperclip.PyperclipException:
+                pass 
+        return ''
+
+    def get_selected_text(self, timeout=0.5):
         """
         Get the currently selected text from any application.
         Args:
@@ -337,29 +353,30 @@ class WritingToolApp(QtWidgets.QApplication):
         """
         # Backup the clipboard
         clipboard_backup = pyperclip.paste()
-        logging.debug(f'Clipboard backup: "{clipboard_backup}" (sleep: {sleep_duration}s)')
-
-        # Clear the clipboard
+        logging.debug(f'Clipboard backup: "{clipboard_backup}"')
         self.clear_clipboard()
+
+        # First release the hotkey to prevent unexpected shortcut calls
+        kbrd = pykeyboard.Controller()
+        logging.debug('Release hotkey')
+        for key_str in self.registered_hotkey.lower().split('+'):
+            try:
+                # Try to get the special key from the Key class (like Key.ctrl)
+                key = getattr(pykeyboard.Key, key_str)
+            except AttributeError:
+                # Not a special key, treat it as a character
+                key = key_str
+            kbrd.release(key)
 
         # Simulate Ctrl+C
         logging.debug('Simulating Ctrl+C')
-        kbrd = pykeyboard.Controller()
+        kbrd.press(pykeyboard.Key.ctrl.value)
+        kbrd.press('c')
+        kbrd.release('c')
+        kbrd.release(pykeyboard.Key.ctrl.value)
 
-        def press_ctrl_c():
-            kbrd.press(pykeyboard.Key.ctrl.value)
-            kbrd.press('c')
-            kbrd.release('c')
-            kbrd.release(pykeyboard.Key.ctrl.value)
-
-        press_ctrl_c()
-
-        # Wait for the clipboard to update
-        time.sleep(sleep_duration)
-        logging.debug(f'Waited {sleep_duration}s for clipboard')
-
-        # Get the selected text
-        selected_text = pyperclip.paste()
+        # Get the selected text content once it has been copied
+        selected_text = self.get_clipboard_when_ready(previous_value="", timeout=timeout)
 
         # Restore the clipboard
         pyperclip.copy(clipboard_backup)
@@ -425,9 +442,9 @@ class WritingToolApp(QtWidgets.QApplication):
                     prompt_prefix = selected_prompt['prefix']
                     system_instruction = selected_prompt['instruction']
                     if option == 'Custom':
-                        prompt = f"{prompt_prefix}Described change: {custom_change}\n\nText: {selected_text}"
+                        prompt = f"{prompt_prefix}\n\n>> Described change: {custom_change}\n\n>> Text: {selected_text}"
                     else:
-                        prompt = f"{prompt_prefix}{selected_text}"
+                        prompt = f"{prompt_prefix}\n\n{selected_text}"
 
                 self.output_queue = ""
 
