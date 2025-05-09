@@ -8,6 +8,8 @@ from PySide6.QtWidgets import QHBoxLayout, QRadioButton, QScrollArea
 
 from ui.AutostartManager import AutostartManager
 from ui.UIUtils import UIUtils, colorMode
+from ui.CustomPopupWindow import CustomPopupWindow
+
 
 _ = lambda x: x
 
@@ -214,14 +216,14 @@ class SettingsWindow(QtWidgets.QWidget):
             # Add autostart checkbox for Windows compiled version
             if AutostartManager.get_startup_path():
                 self.autostart_checkbox = QtWidgets.QCheckBox(_("Start on Boot"))
-                self.autostart_checkbox.setStyleSheet(f"font-size: 16px; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
+                self.autostart_checkbox.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
                 self.autostart_checkbox.setChecked(AutostartManager.check_autostart())
                 self.autostart_checkbox.stateChanged.connect(self.toggle_autostart)
                 content_layout.addWidget(self.autostart_checkbox)
 
             # Add shortcut key input
             shortcut_label = QtWidgets.QLabel(_("Shortcut Key:"))
-            shortcut_label.setStyleSheet(f"font-size: 16px; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
+            shortcut_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
             content_layout.addWidget(shortcut_label)
 
             self.shortcut_input = QtWidgets.QLineEdit(self.app.config.get('shortcut', 'ctrl+space'))
@@ -236,7 +238,7 @@ class SettingsWindow(QtWidgets.QWidget):
 
             # Add theme selection
             theme_label = QtWidgets.QLabel(_("Background Theme:"))
-            theme_label.setStyleSheet(f"font-size: 16px; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
+            theme_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
             content_layout.addWidget(theme_label)
 
             theme_layout = QHBoxLayout()
@@ -251,9 +253,37 @@ class SettingsWindow(QtWidgets.QWidget):
             theme_layout.addWidget(self.plain_radio)
             content_layout.addLayout(theme_layout)
 
+            # Add the "Edit Prompts" button before the provider settings
+            prompts_label = QtWidgets.QLabel(_("Prompts:"))
+            prompts_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
+            content_layout.addWidget(prompts_label)
+            self.edit_prompts_button = QtWidgets.QPushButton(_("Edit Prompts"))
+            self.edit_prompts_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {'#4CAF50' if colorMode == 'dark' else '#008CBA'};  /* Set background color */
+                    color: white;
+                    padding: 10px;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 5px;
+                }}
+                QPushButton:hover {{
+                    background-color: {'#45a049' if colorMode == 'dark' else '#007095'};  /* Change background on hover */
+                }}
+                QPushButton:focus {{
+                    background-color: {'#3e8e41' if colorMode == 'dark' else '#006494'};  /* Focused button color */
+                }}
+            """)
+            self.edit_prompts_button.setFixedWidth(200)  # Set a specific width for the button
+            self.edit_prompts_button.clicked.connect(self.open_edit_prompts)
+            button_layout = QtWidgets.QHBoxLayout()
+            button_layout.addWidget(self.edit_prompts_button, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
+            content_layout.addLayout(button_layout)
+            
+
         # Add provider selection
         provider_label = QtWidgets.QLabel(_("Choose AI Provider:"))
-        provider_label.setStyleSheet(f"font-size: 16px; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
+        provider_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {'#ffffff' if colorMode == 'dark' else '#333333'};")
         content_layout.addWidget(provider_label)
 
         self.provider_dropdown = QtWidgets.QComboBox()
@@ -343,6 +373,14 @@ class SettingsWindow(QtWidgets.QWidget):
         max_height = int(screen.height() * 0.85)  # 85% of screen height
         desired_height = min(720, max_height)  # Cap at 720px or 85% of screen height
         self.resize(592, desired_height)  # Use an exact width of 592px so stuff looks good!
+
+    def open_edit_prompts(self):
+        """Open the CustomPopupWindow in edit mode."""
+        # Assuming you have access to the prompts data in self.app
+        selected_text = "Edit your prompts"  # Modify this as needed
+        self.custom_popup = CustomPopupWindow(self.app, selected_text)
+        self.custom_popup.show()
+        self.custom_popup.toggle_edit_mode()
 
     @staticmethod
     def toggle_autostart(state):
